@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  bootnode:
+    image: 'noux/bc-ac-node:1.0.0'
+    volumes:
+      - ./:/tmp/experiments:ro
+      - status:/tmp/status/
+    entrypoint: 
+      - /tmp/experiments/bootnode-startup.sh
+    ports:
+      - 30333:30333
+      - 9944:9944
+      - 9933:9933
+    env_file:
+      - ./.env
+    stdin_open: true
+    tty: true
+
+  validator:
+    image: 'noux/bc-ac-node:1.0.0'
+    volumes:
+      - ./:/tmp/experiments:ro
+      - status:/tmp/status/
+    entrypoint: 
+      - /tmp/experiments/validator-startup.sh
+    env_file:
+      - ./.env
+    depends_on:
+      - bootnode
+
+volumes:
+  status:

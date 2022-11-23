@@ -1,0 +1,5 @@
+js-utility-tool/node_modules
+.env
+customSpec*.json
+*.txt
+!frequent_commands.txt
