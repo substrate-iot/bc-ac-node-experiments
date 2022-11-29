@@ -1,5 +1,9 @@
-js-utility-tool/node_modules
+*/node_modules
 .env
 customSpec*.json
 *.txt
-!frequent_commands.txt
+!notes.txt
+
+/target/
+**/*.rs.bk
+Cargo.lock

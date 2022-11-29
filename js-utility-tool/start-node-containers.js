@@ -31,8 +31,9 @@ const startBootnode = async () => {
   console.log(`${progressCount}.1 Starting node at the first time for initialization`)
   cmd = [
     'docker run -i -d --rm --name bc_ac_bootnode',
-    '-p 30333:30333 -p 9944:9944 -p 9933:9933',
-    '--add-host=host.docker.internal:host-gateway',
+    // '-p 30333:30333 -p 9944:9944 -p 9933:9933',
+    // '--add-host=host.docker.internal:host-gateway',
+    '--net=host',
     `--volume ${process.env.CWD}:/tmp/experiments`,
     'noux/bc-ac-node:1.0.0',
     '--base-path /tmp/node',
@@ -195,4 +196,36 @@ const startNodeContainers = async () => {
   }
 }
 
-startNodeContainers()
+const startPolkadotJsApps = async () => {
+  let cmd
+
+  progressCount++
+
+  console.log('------------------------------------------------------------')
+  console.log(`${progressCount}. Starting Polkadot.JS Apps v0.121.2 (nhuando)`)
+  console.log('------------------------------------------------------------')
+  cmd = [
+    'docker run -i -d --rm --name polkadot-ui',
+    `-e WS_URL=ws://${process.env.BOOTNODE_IP_V4}:9944`,
+    '-p 8080:80',
+    'noux/polkadot-js-apps:0.121.2'
+  ].join(' ')
+
+  console.log('Command:', cmd)
+
+  try {
+    const { stdout, stderr } = await exec(cmd, { cwd: process.env.CWD })
+    console.log("stdout:", stdout)
+  } catch (e) {
+    errorHandle(e)
+  }
+}
+
+const main = async () => {
+  await startNodeContainers()
+  if (process.env.START_POLKADOT_JS_APPS === 'true') {
+    await startPolkadotJsApps()
+  }
+}
+
+main()

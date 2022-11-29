@@ -1,0 +1,9 @@
+{
+  "editor.tabSize": 2,
+  "rust-analyzer.rustfmt.extraArgs": [
+    "--config",
+    "tab_spaces=2",
+    "--config",
+    "max_width=160"
+  ]
+}

@@ -1,0 +1,31 @@
+# Generating keys
+node generate-chain-spec.js \
+  --cwd /media/nd/FAST/labs/thesis/bc-ac-node-experiments \
+  --password nhuando --name ABC --count 3
+  
+
+# Docker commands
+docker-compose up -d # Running systems in daemon mode
+docker-compose down -v # Cleaning systems including named volumes
+docker-compose logs -f bootnode
+docker kill $(docker ps -q) # Stop All Docker Containers
+
+docker exec bc_ac_bootnode ls /tmp/node/chains/local_testnet/keystore
+
+# .env file
+START_POLKADOT_JS_APPS=true
+CWD="/media/nd/FAST/labs/thesis/bc-ac-node-experiments/"
+RUN_BOOTNODE=true
+BOOTNODE_IP_V4="127.0.0.1" 
+BOOTNODE_KEY="0000000000000000000000000000000000000000000000000000000000000001"
+BOOTNODE_ID="12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp"
+PASSWORD="nhuando"
+CUSTOM_SPEC_RAW_FILE="customSpecRaw_2Node.json"
+SECRET_PHRASES_FILE="secretPhrases_2Node.txt"
+VALIDATOR_SECRET_PHRASES_START=1
+VALIDATOR_SECRET_PHRASES_END=2
+VALIDATOR_NUMBER=1
+
+
+# Run in dev mode
+docker run -id --rm --name bc_ac_test --net=host noux/bc-ac-node:1.0.0 --dev
