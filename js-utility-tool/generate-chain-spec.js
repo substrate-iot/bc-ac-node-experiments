@@ -40,7 +40,8 @@ const generateRandomKeys = async (count, password, sureDifferent) => {
     // 1. Generating SR25519 keys and making sure them different
     let execPromises = Array.from(Array(count), () => {
       const command = [
-        './node-template',
+        'docker run --rm',
+        'noux/bc-ac-node:1.0.0',
         'key',
         'generate',
         '--scheme',
@@ -51,7 +52,7 @@ const generateRandomKeys = async (count, password, sureDifferent) => {
         'json'
       ].join(' ')
       console.log('Command:', command)
-      return exec(command, { cwd: CWD })
+      return exec(command)
     })
 
     let execResults = await Promise.all(execPromises)
@@ -73,7 +74,8 @@ const generateRandomKeys = async (count, password, sureDifferent) => {
     // 2. Generating ED25519 keys based on secret phrases in SR25519 generating results
     execPromises = sr25519Keys.map((key) => {
       const command = [
-        './node-template',
+        'docker run --rm',
+        'noux/bc-ac-node:1.0.0',
         'key',
         'inspect',
         '--output-type',
@@ -85,7 +87,7 @@ const generateRandomKeys = async (count, password, sureDifferent) => {
         `"${key.secretPhrase}"`
       ].join(' ')
       console.log('Command:', command)
-      return exec(command, { cwd: CWD })
+      return exec(command)
     })
 
     execResults = await Promise.all(execPromises)
@@ -113,14 +115,15 @@ const generateChainSpec = async (name, count, password) => {
     let customSpec
     {
       const command = [
-        './node-template',
+        'docker run --rm',
+        'noux/bc-ac-node:1.0.0',
         'build-spec',
         '--disable-default-bootnode',
         '--chain',
         'local'
       ].join(' ')
       console.log('Command:', command)
-      const { stdout, stderr } = await exec(command, { cwd: CWD })
+      const { stdout, stderr } = await exec(command)
 
       customSpec = JSON.parse(stdout)
     }
@@ -139,16 +142,18 @@ const generateChainSpec = async (name, count, password) => {
 
     // 5. Exporting to raw custom spec.
     const command = [
-      './node-template',
+      'docker run --rm',
+      `--volume ${CWD}:/tmp/output:ro`,
+      'noux/bc-ac-node:1.0.0',
       'build-spec',
-      `--chain=${path.join(CWD, `customSpec_${name}.json`)}`,
+      `--chain=/tmp/output/customSpec_${name}.json`,
       '--raw',
       '--disable-default-bootnode',
       '>',
       path.join(CWD, `customSpecRaw_${name}.json`)
     ].join(' ')
     console.log('Command:', command)
-    await exec(command, { cwd: CWD })
+    await exec(command)
 
   } catch (e) {
     errorHandle(e) // should contain code (exit code) and signal (that caused the termination).
