@@ -12,6 +12,10 @@
   "author": "Nhuan Do",
   "license": "ISC",
   "dependencies": {
+    "@polkadot/api": "9.4.2",
+    "@polkadot/api-contract": "9.4.2",
+    "@polkadot/keyring": "^10.1.9",
+    "@polkadot/util-crypto": "^10.1.14",
     "dotenv": "^16.0.3",
     "yargs": "^17.6.2"
   }
